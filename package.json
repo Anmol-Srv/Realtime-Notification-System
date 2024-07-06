@@ -1,0 +1,36 @@
+{
+  "name": "realtime-notification-system",
+  "version": "1.0.0",
+  "description": "A microservices based realtime notification systemto handle high-volume message processing and deliver real-time notifications to users.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/server.js",
+    "consumer": "node src/services/notificationConsumer.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anmol-Srv/Realtime-Notification-System.git"
+  },
+  "author": "Anmol-Srv",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Anmol-Srv/Realtime-Notification-System/issues"
+  },
+  "homepage": "https://github.com/Anmol-Srv/Realtime-Notification-System#readme",
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.5",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.6.0",
+    "eslint": "^9.6.0",
+    "globals": "^15.8.0",
+    "nodemon": "^3.1.4"
+  }
+}
