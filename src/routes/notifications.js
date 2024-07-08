@@ -1,21 +1,3 @@
-// const express = require('express');
-// const {
-//   createNotification,
-//   getNotifications,
-//   getNotificationById,
-//   markNotificationAsRead
-// } = require('../controllers/notificationController');
-// const authMiddleware = require('../middlewares/authMiddleware');
-
-// const router = express.Router();
-
-// router.post('/', authMiddleware, createNotification);
-// router.get('/', authMiddleware, getNotifications);
-// router.get('/:id', authMiddleware, getNotificationById);
-// router.put('/:id', authMiddleware, markNotificationAsRead);
-
-// module.exports = router;
-
 const express = require('express');
 const {
   createNotification,
@@ -58,6 +40,21 @@ const router = express.Router();
  */
 router.post('/', authMiddleware, roleMiddleware, createNotification);
 
+// /**
+//  * @swagger
+//  * /api/notifications:
+//  *   get:
+//  *     summary: Get a list of all notifications for the authenticated user
+//  *     tags: [Notifications]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: A list of notifications
+//  *       500:
+//  *         description: Server error
+//  */
+// router.get('/', authMiddleware, getNotifications);
 /**
  * @swagger
  * /api/notifications:
@@ -66,9 +63,33 @@ router.post('/', authMiddleware, roleMiddleware, createNotification);
  *     tags: [Notifications]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: The page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: The number of items per page
  *     responses:
  *       200:
  *         description: A list of notifications
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 notifications:
+ *                   type: array
+ *                 totalPages:
+ *                   type: integer
+ *                 currentPage:
+ *                   type: integer
  *       500:
  *         description: Server error
  */
