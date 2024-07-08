@@ -24,6 +24,7 @@ const {
   markNotificationAsRead
 } = require('../controllers/notificationController');
 const authMiddleware = require('../middlewares/authMiddleware');
+const roleMiddleware = require('../middlewares/roleMiddleware');
 
 const router = express.Router();
 
@@ -55,7 +56,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post('/', authMiddleware, createNotification);
+router.post('/', authMiddleware, roleMiddleware, createNotification);
 
 /**
  * @swagger
@@ -124,3 +125,4 @@ router.get('/:id', authMiddleware, getNotificationById);
 router.put('/:id', authMiddleware, markNotificationAsRead);
 
 module.exports = router;
+
