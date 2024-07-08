@@ -12,7 +12,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: 'http://localhost:3000',
+        url: 'https://realtime-notification-system.onrender.com/',
       },
     ],
     components: {
