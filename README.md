@@ -51,7 +51,7 @@ npm install
 ```
 MONGODB_URI=<your_mongodb_uri>
 JWT_SECRET=<your_jwt_secret>
-RABBITMQ_URI=amqps://<username>:<password>@b-b1dd08ad-e17b-4b72-8e1e-372691a22c4a.mq.us-east-1.amazonaws.com:5671
+RABBITMQ_URI=<your_rabbitmq_uri>
 ```
 
 ### Running the Project
