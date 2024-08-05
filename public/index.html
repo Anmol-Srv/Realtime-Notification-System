@@ -1,42 +1,287 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-  <title>WebSocket Notifications</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            font-size: 24px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #response {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            color: #333;
+        }
+
+        #notifications {
+            margin-top: 20px;
+            list-style: none;
+            padding: 0;
+        }
+
+        #notifications li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #e6e6fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 
 <body>
-  <h1>WebSocket Notifications</h1>
-  <ul id="notifications"></ul>
+    <h1>API Dashboard</h1>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
+    <!-- User Registration Section -->
+    <div class="section">
+        <h2>Register a New User</h2>
+        <form id="register-form">
+            <div class="form-group">
+                <label for="register-username">Username</label>
+                <input type="text" id="register-username" required>
+            </div>
+            <div class="form-group">
+                <label for="register-password">Password</label>
+                <input type="password" id="register-password" required>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div id="register-response" class="response"></div>
+    </div>
 
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-    });
+    <!-- User Login Section -->
+    <div class="section">
+        <h2>Login</h2>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="login-username">Username</label>
+                <input type="text" id="login-username" required>
+            </div>
+            <div class="form-group">
+                <label for="login-password">Password</label>
+                <input type="password" id="login-password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+        <div id="login-response" class="response"></div>
+    </div>
 
-    socket.on('notification', (notification) => {
-      console.log('Received notification:', notification);
-      const li = document.createElement('li');
-      li.textContent = notification.message;
-      document.getElementById('notifications').appendChild(li);
-    });
+    <!-- Create Notification Section -->
+    <div class="section">
+        <h2>Create a New Notification</h2>
+        <form id="create-notification-form">
+            <div class="form-group">
+                <label for="notification-title">Title</label>
+                <input type="text" id="notification-title" required>
+            </div>
+            <div class="form-group">
+                <label for="notification-message">Message</label>
+                <textarea id="notification-message" rows="3" required></textarea>
+            </div>
+            <button type="submit">Create Notification</button>
+        </form>
+        <div id="create-notification-response" class="response"></div>
+    </div>
 
-    socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
-    });
+    <!-- Notification List Section -->
+    <div class="section">
+        <h2>Notifications</h2>
+        <button id="get-notifications">Get All Notifications</button>
+        <ul id="notification-list"></ul>
+        <div id="get-notifications-response" class="response"></div>
+    </div>
 
-    socket.on('connect_error', (err) => {
-      console.error('Connection error:', err);
-    });
+    <!-- WebSocket Notifications Section -->
+    <div class="section">
+        <h2>WebSocket Notifications</h2>
+        <ul id="notifications"></ul>
+    </div>
 
-    socket.on('error', (err) => {
-      console.error('Socket error:', err);
-    });
-  </script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        socket.on('connect', () => {
+            console.log('Connected to WebSocket server');
+        });
+
+        socket.on('notification', (notification) => {
+            console.log('Received notification:', notification);
+            const li = document.createElement('li');
+            li.textContent = notification.message;
+            document.getElementById('notifications').appendChild(li);
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from WebSocket server');
+        });
+
+        socket.on('connect_error', (err) => {
+            console.error('Connection error:', err);
+        });
+
+        socket.on('error', (err) => {
+            console.error('Socket error:', err);
+        });
+
+        // Register a new user
+        document.getElementById('register-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('register-username').value;
+            const password = document.getElementById('register-password').value;
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                document.getElementById('register-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error registering user:', error);
+                document.getElementById('register-response').textContent = 'Failed to register user.';
+            }
+        });
+
+        // Login user
+        document.getElementById('login-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await response.json();
+                document.getElementById('login-response').textContent = JSON.stringify(data, null, 2);
+                if (data.token) {
+                    localStorage.setItem('token', data.token);
+                }
+            } catch (error) {
+                console.error('Error logging in:', error);
+                document.getElementById('login-response').textContent = 'Failed to log in.';
+            }
+        });
+
+        // Create a new notification
+        document.getElementById('create-notification-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const title = document.getElementById('notification-title').value;
+            const message = document.getElementById('notification-message').value;
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('/api/notifications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, message })
+                });
+                const data = await response.json();
+                document.getElementById('create-notification-response').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Error creating notification:', error);
+                document.getElementById('create-notification-response').textContent = 'Failed to create notification.';
+            }
+        });
+
+        // Get all notifications
+        document.getElementById('get-notifications').addEventListener('click', async () => {
+            const token = localStorage.getItem('token');
+            try {
+                const response = await fetch('/api/notifications', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+                const notificationList = document.getElementById('notification-list');
+                notificationList.innerHTML = '';
+                data.forEach(notification => {
+                    const li = document.createElement('li');
+                    li.textContent = `Title: ${notification.title}, Message: ${notification.message}`;
+                    notificationList.appendChild(li);
+                });
+                document.getElementById('get-notifications-response').textContent = 'Notifications fetched successfully.';
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+                document.getElementById('get-notifications-response').textContent = 'Failed to fetch notifications.';
+            }
+        });
+    </script>
 </body>
 
 </html>
-
